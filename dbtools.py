@@ -1,4 +1,4 @@
-import pandas as pd
+﻿import pandas as pd
 from pymongo import MongoClient
 import json
 
@@ -57,8 +57,8 @@ def df2mongo(db, collection, df, symbol='TSLA', host='localhost', port=27017, us
     	cursor = db[collection].delete_many({'symbol':symbol})
     	df['symbol'] = symbol
     	df['date'] = df.index
-    	records = json.loads(df.T.to_json()).values()
-    	db.prices.insert_many(records)
+    	records = df.to_dict('records')
+    	db[collection].insert_many(records)
     	return len(df.index)
 
     # Make a query to the specific DB and Collection
@@ -75,8 +75,8 @@ def df2mongo(db, collection, df, symbol='TSLA', host='localhost', port=27017, us
 
     	df = df[~df.index.isin(df1['date'])]
 
-    	records = json.loads(df.T.to_json()).values()
-    	db.prices.insert_many(records)
+    	records = df.to_dict('records')
+    	db[collection].insert_many(records)
 
     return len(df.index)
 
